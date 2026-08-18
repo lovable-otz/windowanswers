@@ -1,0 +1,1257 @@
+/* ============================================================================
+   Window Answers - design system
+   Belongs to THIS site only. The other four get deliberately different ones;
+   a shared template across five sites is a detectable footprint.
+   No external fonts, no external images: every request is a CWV cost and a
+   shared third-party fingerprint. Everything below is CSS and inline SVG.
+   ========================================================================= */
+
+/* Palette derived from the supplied logo (windowans.png) by
+   tools/brand_from_logo.py, not chosen by eye. The logo's three marks map to:
+     #001830 navy wordmark -> ink
+     #0084cc blue glazing  -> accent
+     #248424 green leaf    -> secondary
+   Accent and green are darkened from the raw logo values to #0072b0 / #227e22
+   so they clear WCAG AA (4.5:1) as text on BOTH white and the wash background.
+   The raw logo blues survive as --a-2 and --a-3, where they are used for fills
+   and gradients rather than text. */
+:root{
+  /* ink */
+  --ink:#0d1c2b;
+  --ink-2:#33475c;
+  --ink-3:#66788c;
+  --line:#e1e8ef;
+  --line-2:#eff3f7;
+
+  /* ground */
+  --bg:#ffffff;
+  --bg-2:#f7f9fb;
+  --bg-3:#eaf2f8;
+  --card:#ffffff;
+
+  /* accent - from the logo's window glazing */
+  --a:#0072b0;
+  --a-2:#0084cc;
+  --a-3:#30b4e4;
+  --a-wash:#e7f2f8;
+  --a-ink:#005080;
+  /* dark pastel surfaces - muted deep tones off the accent hue, used for the
+     hero scrim, the mobile call bar and the deep band section. Not the same as
+     the dark THEME: these stay put in both themes. */
+  --deep:#20384a;
+  --deep-2:#2c4d63;
+  --deep-3:#3d6480;
+  --deep-ink:#e4edf4;
+  --deep-ink-2:#a9c2d4;
+
+  /* secondary - from the logo's leaf */
+  --g:#227e22;
+  --g-wash:#e9f4e9;
+
+  /* warning, used only for the unwritten-page marker */
+  --amber:#b7791f;
+  --amber-wash:#fdf6e7;
+  --amber-line:#e8d5a3;
+
+  --shadow-1:0 1px 2px rgba(11,22,34,.05), 0 1px 3px rgba(11,22,34,.04);
+  --shadow-2:0 4px 12px rgba(11,22,34,.06), 0 1px 3px rgba(11,22,34,.05);
+  --shadow-3:0 18px 40px -12px rgba(11,22,34,.16), 0 4px 12px rgba(11,22,34,.05);
+
+  --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,'Times New Roman',serif;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --r:10px; --r-lg:16px; --r-xl:22px;
+  --read:43rem; --wide:70rem;
+}
+
+/* LIGHT IS THE DEFAULT, deliberately. The operating-system preference is NOT
+   followed: a machine set to dark mode still gets the light site, because that
+   is the design the brand was built around. Dark stays available on demand via
+   the header toggle, which sets data-theme="dark" and is remembered per reader.
+   Because there is no prefers-color-scheme block, the palette below is the only
+   definition of the dark theme and the two can no longer drift apart. */
+:root[data-theme="dark"]{
+  --ink:#e8eef4; --ink-2:#a9bacb; --ink-3:#7b8ea3;
+  --line:#28333e; --line-2:#1b242d;
+  --bg:#0c1116; --bg-2:#121921; --bg-3:#18222c; --card:#141d26;
+  --a:#30b4e4; --a-2:#56c4ec; --a-3:#7ad4ef; --a-wash:#132b38; --a-ink:#a9e2f5;
+  --g:#5cc45c; --g-wash:#16301b;
+  --amber:#e0b45c; --amber-wash:#2a2314; --amber-line:#5c4d22;
+  --shadow-1:0 1px 2px rgba(0,0,0,.4);
+  --shadow-2:0 4px 14px rgba(0,0,0,.45);
+  --shadow-3:0 18px 44px -12px rgba(0,0,0,.65);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none !important; transition:none !important}
+}
+body{
+  margin:0; padding-top:3px; /* room for the fixed brand ribbon, body::before */
+  background:var(--bg); color:var(--ink);
+  font:1.0625rem/1.7 var(--sans);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+img{max-width:100%; height:auto}
+.wrap{width:100%; max-width:var(--wide); margin:0 auto; padding:0 1.5rem}
+.wrap-read{width:100%; max-width:var(--read); margin:0 auto; padding:0 1.5rem}
+.skip{position:absolute; left:-9999px}
+.skip:focus{left:1rem; top:1rem; z-index:60; background:var(--a); color:#fff;
+  padding:.7rem 1.1rem; border-radius:var(--r)}
+:focus-visible{outline:2.5px solid var(--a-2); outline-offset:3px; border-radius:3px}
+
+/* ========================================================== masthead ===== */
+/* Brand ribbon: a fixed 3px gradient strip above the masthead. Small, but it is
+   the one element on screen at all times, in every scroll position, on every
+   page - the cheapest way to keep the accent gradient present as a constant
+   rather than something only the hero gets to use once. */
+body::before{
+  content:""; position:fixed; inset:0 0 auto 0; height:3px; z-index:51;
+  background:linear-gradient(90deg,var(--a),var(--a-3) 45%,var(--g) 85%);
+}
+.masthead{
+  position:sticky; top:3px; z-index:50;
+  background:color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 var(--line), var(--shadow-1);
+}
+/* The masthead gets a WIDER container than the page content. --wide is 70rem
+   (1120px), and brand + seven sections + the quote button need ~1172px: with the
+   content wrap the nav could never fit at any viewport size, so it wrapped onto
+   a second row on every screen. Content stays at 70rem for line length; only the
+   header is allowed to use the extra width. */
+.masthead .wrap{max-width:82rem}
+.masthead-in{display:flex; align-items:center; gap:2rem; min-height:4.25rem; flex-wrap:wrap}
+.brand{display:flex; align-items:center; gap:.65rem; text-decoration:none; color:var(--ink);
+  flex:0 0 auto; font-weight:600}
+/* The supplied artwork is a stacked lockup (mark over wordmark over tagline).
+   Scaled to header height the wordmark lands around 10px and stops being
+   readable, so the header pairs the MARK with the brand name as live text.
+   That also keeps the name crisp at any zoom and readable by a screen reader. */
+.brand-mark{width:2.125rem; height:2.125rem; flex:0 0 auto; display:block}
+.brand-name{display:flex; flex-direction:column; line-height:1}
+.brand-name b{font:600 1.16rem/1 var(--serif); letter-spacing:-.012em; color:var(--ink)}
+.brand-name i{font:600 .585rem/1 var(--sans); letter-spacing:.16em; text-transform:uppercase;
+  font-style:normal; color:var(--a); margin-top:.24rem}
+/* ---------- main nav with section panels ----------
+   Each item is a hub link plus a panel of that hub's top answers. The panel is
+   opened by :hover and by :focus-within, both of which are pure CSS, so the nav
+   is fully usable with JavaScript off. The chevron button adds click-to-open for
+   touch and for keyboard users who do not want to tab through the panel. */
+.nav{margin-left:auto; font-size:.925rem}
+.nav-list{display:flex; gap:.35rem; list-style:none; margin:0; padding:0}
+.nav-item{position:relative; display:flex; align-items:center}
+.nav-link{
+  color:var(--ink-2); text-decoration:none; position:relative;
+  padding:.45rem .1rem; white-space:nowrap;
+}
+.nav-item{padding:0 .55rem}
+.nav-link::after{content:""; position:absolute; left:0; right:100%; bottom:.1rem; height:2px;
+  background:var(--a-2); border-radius:2px; transition:right .22s ease}
+.nav-link:hover{color:var(--ink)}
+.nav-item:hover .nav-link::after,
+.nav-item:focus-within .nav-link::after,
+.nav-link[aria-current="page"]::after{right:0}
+.nav-link[aria-current="page"]{color:var(--ink); font-weight:550}
+
+.nav-chev{
+  display:grid; place-items:center; width:1.1rem; height:1.1rem; margin-left:.15rem;
+  padding:0; border:0; background:none; color:var(--ink-3); cursor:pointer;
+  border-radius:4px; transition:transform .2s ease, color .15s ease;
+}
+.nav-chev svg{width:.85rem; height:.85rem}
+.nav-item:hover .nav-chev,.nav-item:focus-within .nav-chev{color:var(--a)}
+.nav-item:hover .nav-chev,
+.nav-item:focus-within .nav-chev,
+.nav-item.open .nav-chev{transform:rotate(180deg)}
+
+.nav-panel{
+  position:absolute; top:100%; left:0; z-index:40; padding-top:.6rem;
+  width:23rem; max-width:calc(100vw - 3rem);
+  opacity:0; visibility:hidden; transform:translateY(-.4rem);
+  transition:opacity .18s ease, transform .18s ease, visibility .18s;
+}
+/* The last two items would push a left-aligned panel off the right edge. */
+.nav-item:nth-last-child(-n+2) .nav-panel{left:auto; right:0}
+.nav-item:hover .nav-panel,
+.nav-item:focus-within .nav-panel,
+.nav-item.open .nav-panel{opacity:1; visibility:visible; transform:none}
+.nav-panel-in{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg);
+  box-shadow:var(--shadow-3); padding:.9rem;
+}
+.nav-panel-lede{
+  margin:0 0 .7rem; padding:0 .5rem; font-size:.83rem; line-height:1.5; color:var(--ink-3);
+}
+.nav-panel ul{list-style:none; margin:0; padding:0}
+.nav-panel li+li{border-top:1px solid var(--line-2)}
+.nav-panel li a{
+  display:flex; align-items:baseline; gap:.75rem; padding:.5rem; border-radius:8px;
+  text-decoration:none; color:var(--ink-2); font-size:.9rem; line-height:1.4;
+  transition:background .13s ease, color .13s ease;
+}
+.nav-panel li a:hover{background:var(--a-wash); color:var(--a-ink)}
+.nav-panel li a span{flex:1 1 auto; min-width:0}
+.nav-panel li a em{
+  font-style:normal; font-size:.76rem; color:var(--ink-3); white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.nav-panel li a em small{font-size:.68rem; opacity:.75}
+.nav-panel-all{
+  display:flex; align-items:center; gap:.4rem; margin-top:.55rem; padding:.55rem .5rem 0;
+  border-top:1px solid var(--line); font-size:.85rem; font-weight:550;
+  color:var(--a); text-decoration:none;
+}
+.nav-panel-all svg{width:.85rem; height:.85rem; transition:transform .18s ease}
+.nav-panel-all:hover svg{transform:translateX(3px)}
+
+/* burger: hidden until the nav breakpoint, so it is never a duplicate control */
+/* 2.75rem = 44px, the smallest comfortable touch target. At 2.4rem it measured
+   38px, which is under the threshold on the one control a phone user must hit
+   to navigate at all. */
+.burger{
+  display:none; margin-left:auto; width:2.75rem; height:2.75rem; padding:0; cursor:pointer;
+  place-items:center; border-radius:9px; background:var(--card);
+  border:1px solid var(--line); color:var(--ink-2);
+}
+.burger:hover{border-color:var(--a-3); color:var(--a)}
+.burger svg{width:1.2rem; height:1.2rem; display:block}
+.burger-ico{line-height:0}
+.burger-close{display:none}
+.nav-open .burger-open{display:none}
+.nav-open .burger-close{display:block}
+
+/* ---------- floating dock: theme above back-to-top ---------- */
+.dock{
+  position:fixed; right:clamp(.85rem,2.5vw,1.4rem); bottom:clamp(.85rem,2.5vw,1.4rem);
+  z-index:45; display:flex; flex-direction:column; gap:.5rem;
+}
+.dock-btn{
+  width:2.7rem; height:2.7rem; padding:0; cursor:pointer; display:grid; place-items:center;
+  border-radius:50%; background:var(--card); border:1px solid var(--line);
+  color:var(--ink-2); box-shadow:var(--shadow-2); text-decoration:none;
+  transition:border-color .15s ease, color .15s ease, transform .15s ease,
+    box-shadow .15s ease;
+}
+.dock-btn:hover{border-color:var(--a-3); color:var(--a); transform:translateY(-2px);
+  box-shadow:var(--shadow-3)}
+.dock-btn svg{width:1.15rem; height:1.15rem; display:block}
+/* No-JS baseline: back-to-top never appears, because without the scroll listener
+   there is nothing to decide when it should. */
+.dock-btn[hidden]{display:none}
+.dock-ico{line-height:0}
+/* With JS, the button keeps its slot in the dock at all times and only fades in.
+   Toggling display here instead would move the theme button up the screen the
+   moment a reader scrolls, and a control that relocates under the cursor is
+   worse than one that is briefly inert. visibility:hidden also keeps it out of
+   the tab order while it is unavailable. */
+.dock-top{opacity:0; visibility:hidden; transform:translateY(.4rem)}
+.dock-top.is-on{opacity:1; visibility:visible; transform:none}
+/* Light is the default, so the button offers the moon. In dark it offers the sun. */
+.theme-ico-sun,.theme-ico-moon{display:none; line-height:0}
+.theme-ico-moon{display:block}
+:root[data-theme="dark"] .theme-ico-moon{display:none}
+:root[data-theme="dark"] .theme-ico-sun{display:block}
+
+/* disclosure - required above the fold (content gate 06) */
+.disclosure-bar{background:var(--bg-2); border-bottom:1px solid var(--line)}
+.disclosure-bar p{
+  margin:0; padding:.55rem 0; font-size:.815rem; line-height:1.5; color:var(--ink-3);
+  display:flex; align-items:center; gap:.5rem;
+}
+.disclosure-bar p::before{
+  content:""; width:.4rem; height:.4rem; border-radius:50%; background:var(--a-2);
+  flex:0 0 auto;
+}
+
+/* ============================================================== hero ===== */
+/* SPLIT hero: the text sits on a solid dark pastel panel, the photograph sits
+   beside it. Text never crosses the image, so contrast is a fixed value rather
+   than whatever the photo happens to be.
+
+   bathremodelbrief.com uses the opposite arrangement - one full-bleed photo with
+   the text centred over a scrim. The two sites should not be recognisable as the
+   same hero with different pictures. */
+.hero{position:relative; background:var(--deep); overflow:hidden}
+.hero-split{
+  position:relative; display:grid; align-items:stretch;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);
+  max-width:82rem; margin:0 auto;
+}
+.hero-panel{
+  position:relative; z-index:1; align-self:center;
+  padding:clamp(3rem,6vw,5.25rem) clamp(1.5rem,3vw,3rem) clamp(3rem,5vw,4.5rem) 1.5rem;
+}
+/* Window-pane lattice on the panel only - this site's motif, kept off the photo. */
+.hero-panel::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:.14;
+  background-image:
+    linear-gradient(#fff 1px, transparent 1px),
+    linear-gradient(90deg, #fff 1px, transparent 1px);
+  background-size:5.5rem 5.5rem;
+  -webkit-mask-image:radial-gradient(28rem 20rem at 18% 24%, #000, transparent 76%);
+  mask-image:radial-gradient(28rem 20rem at 18% 24%, #000, transparent 76%);
+}
+.hero-shot{margin:0; position:relative; min-height:100%}
+.hero-shot img{
+  display:block; width:100%; height:100%; min-height:22rem; object-fit:cover;
+}
+/* Feathered seam so the panel meets the photo as a gradient, not a hard cut. */
+.hero-shot::before{
+  content:""; position:absolute; inset:0 auto 0 0; width:9rem; z-index:1;
+  pointer-events:none;
+  background:linear-gradient(90deg,var(--deep),transparent);
+}
+@media (max-width:62rem){
+  .hero-split{grid-template-columns:1fr}
+  .hero-shot{order:-1; min-height:0}
+  .hero-shot img{min-height:14rem; max-height:20rem}
+  .hero-shot::before{inset:auto 0 0 0; width:auto; height:5rem;
+    background:linear-gradient(180deg,transparent,var(--deep))}
+  .hero-panel{padding-top:2rem}
+}
+/* Text sits on a photograph in both themes, so these colours are fixed rather
+   than theme tokens - the scrim behind them does not change with the toggle. */
+.hero .eyebrow{
+  background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.28);
+  color:#fff; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  box-shadow:none;
+}
+.hero .eyebrow svg{color:#fff}
+.hero h1{
+  font:600 clamp(2.15rem,5.2vw,3.5rem)/1.12 var(--serif);
+  letter-spacing:-.022em; margin:0 0 1.1rem;
+  color:#fff; text-shadow:0 2px 18px rgba(0,0,0,.35);
+}
+.hero-sub{font-size:clamp(1.05rem,2vw,1.19rem); line-height:1.62; margin:0 0 1.9rem}
+.hero h1 em{
+  font-style:normal; white-space:normal;
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--a-3) 55%,transparent),
+    color-mix(in srgb,var(--a-3) 12%,transparent));
+  -webkit-box-decoration-break:clone; box-decoration-break:clone;
+  border-radius:4px; padding:0 .1em; margin:0 -.1em;
+}
+.hero h1 em::after{display:none}
+.hero-sub{color:rgba(255,255,255,.9); text-shadow:0 1px 10px rgba(0,0,0,.3)}
+.hero-note{color:rgba(255,255,255,.85)}
+.hero-note svg{color:#fff}
+/* Ghost button reading on a photo needs its own treatment, not --card. */
+.btn-onphoto{
+  background:rgba(255,255,255,.13); color:#fff; border-color:rgba(255,255,255,.4);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.btn-onphoto:hover{background:rgba(255,255,255,.22); color:#fff;
+  border-color:rgba(255,255,255,.65); transform:translateY(-1.5px)}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:.5rem; margin:0 0 1.25rem;
+  padding:.34rem .8rem .34rem .55rem; border-radius:99px;
+  background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-1);
+  font-size:.775rem; font-weight:550; color:var(--ink-2); letter-spacing:.01em;
+}
+.eyebrow svg{width:.95rem; height:.95rem; color:var(--a-2); flex:0 0 auto}
+.hero-cta{display:flex; gap:.7rem; flex-wrap:wrap; margin:0 0 1.9rem}
+.btn{
+  display:inline-flex; align-items:center; gap:.5rem; text-decoration:none;
+  padding:.72rem 1.25rem; border-radius:var(--r); font-size:.945rem; font-weight:550;
+  border:1px solid transparent; transition:transform .16s ease, box-shadow .16s ease,
+    background .16s ease, border-color .16s ease;
+}
+.btn svg{width:1.05rem; height:1.05rem; flex:0 0 auto}
+.btn-primary{background:linear-gradient(140deg,var(--a-2),var(--a)); color:#fff;
+  box-shadow:var(--shadow-2)}
+.btn-primary:hover{transform:translateY(-1.5px); box-shadow:var(--shadow-3)}
+.btn-ghost{background:var(--card); color:var(--ink); border-color:var(--line);
+  box-shadow:var(--shadow-1)}
+.btn-ghost:hover{border-color:var(--a-2); color:var(--a-ink); transform:translateY(-1.5px)}
+
+.hero-note{display:flex; gap:1.4rem; flex-wrap:wrap; font-size:.845rem; color:var(--ink-3);
+  margin:0; padding:0; list-style:none}
+.hero-note li{display:flex; align-items:center; gap:.42rem}
+/* green from the logo's leaf, so the secondary mark earns a job in the UI */
+.hero-note svg{width:.95rem; height:.95rem; color:var(--g); flex:0 0 auto}
+
+/* ======================================================= stats band ====== */
+.stats-band{background:var(--bg); border-bottom:1px solid var(--line)}
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:1.5rem 2rem; list-style:none; margin:0; padding:clamp(1.75rem,3.5vw,2.5rem) 0}
+.stats li{display:flex; flex-direction:column; gap:.1rem; position:relative; padding-left:1rem}
+.stats li::before{content:""; position:absolute; left:0; top:.35rem; bottom:.35rem; width:2px;
+  border-radius:2px; background:linear-gradient(180deg,var(--a-3),transparent)}
+.stat-n{font:600 clamp(1.75rem,3.6vw,2.35rem)/1 var(--serif); color:var(--ink);
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.stat-l{font-size:.925rem; font-weight:600; color:var(--ink)}
+.stat-d{font-size:.83rem; color:var(--ink-3); line-height:1.5}
+
+/* ======================================================== sections ======= */
+/* Sections were flat white alternating with flat grey, which read as blank.
+   Each now carries a soft off-axis colour wash, and the alt sections add a
+   large blurred accent blob so the ground has some depth behind the content.
+   All of it is drawn - gradients and one radial - so it costs no requests. */
+.section{position:relative; padding:clamp(3rem,6vw,4.75rem) 0; isolation:isolate}
+.section::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(40rem 20rem at 88% 0%, color-mix(in srgb,var(--a-3) 9%,transparent), transparent 70%),
+    radial-gradient(34rem 18rem at 4% 100%, color-mix(in srgb,var(--a) 6%,transparent), transparent 68%);
+}
+/* overflow:hidden clips the blob below, which otherwise sticks out past the
+   right edge and widens the document. Applied ONLY to .section-alt, never to
+   .section: the section explorer's rail is position:sticky and lives in a
+   plain .section, and overflow:hidden on an ancestor silently kills sticky. */
+.section-alt{
+  background:linear-gradient(180deg,var(--bg-2),color-mix(in srgb,var(--a-wash) 55%,var(--bg-2)));
+  border-block:1px solid var(--line);
+  overflow:hidden;
+}
+/* Blurred accent blob, alt sections only, so the two kinds of band are
+   distinguishable by more than a background-colour step. */
+.section-alt::after{
+  content:""; position:absolute; z-index:-1; pointer-events:none;
+  right:-6rem; top:12%; width:26rem; height:26rem; border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--a-3) 26%,transparent),transparent 66%);
+  filter:blur(26px); opacity:.75;
+}
+@media (max-width:60rem){ .section-alt::after{width:16rem; height:16rem; right:-5rem} }
+.section-head{max-width:38rem; margin:0 0 2.25rem}
+.section-head h2{font:600 clamp(1.55rem,3.2vw,2.1rem)/1.22 var(--serif);
+  letter-spacing:-.015em; margin:0 0 .6rem}
+.section-head p{margin:0; color:var(--ink-2); font-size:1.02rem}
+.kicker{display:block; font:600 .755rem/1 var(--sans); letter-spacing:.11em;
+  text-transform:uppercase; color:var(--a-2); margin:0 0 .8rem}
+
+/* ---------- section explorer ----------
+   Rail of six sections + one open panel. Without JS every panel is displayed and
+   the rail entries are ordinary links to the hub pages, so the whole thing
+   degrades to a readable list rather than to six dead buttons. */
+.explorer{
+  display:grid; grid-template-columns:minmax(0,19rem) minmax(0,1fr);
+  gap:clamp(1rem,2.5vw,1.75rem); align-items:start;
+}
+@media (max-width:60rem){ .explorer{grid-template-columns:1fr} }
+
+.exp-rail{display:grid; gap:.3rem; position:sticky; top:5.75rem}
+@media (max-width:60rem){ .exp-rail{position:static} }
+.exp-tab{
+  display:flex; align-items:center; gap:.8rem; padding:.72rem .8rem;
+  border-radius:var(--r); text-decoration:none; color:inherit;
+  border:1px solid transparent; background:transparent; text-align:left;
+  transition:background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.exp-tab:hover{background:var(--card); border-color:var(--line)}
+.exp-tab-ico{
+  flex:0 0 auto; width:2.3rem; height:2.3rem; border-radius:9px; display:grid;
+  place-items:center; background:var(--bg-3); color:var(--a);
+  transition:background .15s ease, color .15s ease;
+}
+.exp-tab-ico svg{width:1.2rem; height:1.2rem}
+.exp-tab-txt{display:flex; flex-direction:column; gap:.12rem; min-width:0; flex:1 1 auto}
+.exp-tab-txt b{font:600 1rem/1.3 var(--serif); letter-spacing:-.008em}
+.exp-tab-txt i{font-style:normal; font-size:.79rem; color:var(--ink-3);
+  font-variant-numeric:tabular-nums}
+.exp-tab-go{flex:0 0 auto; color:var(--a); opacity:0; transform:translateX(-.3rem);
+  transition:opacity .15s ease, transform .15s ease; line-height:0}
+.exp-tab-go svg{width:.95rem; height:.95rem}
+.exp-tab:hover .exp-tab-go{opacity:.6; transform:none}
+/* Selected state is only meaningful once JS has made this a tablist. */
+.explorer[data-js] .exp-tab.is-on{
+  background:var(--card); border-color:var(--a-3); box-shadow:var(--shadow-1);
+}
+.explorer[data-js] .exp-tab.is-on .exp-tab-ico{background:var(--a); color:#fff}
+.explorer[data-js] .exp-tab.is-on .exp-tab-go{opacity:1; transform:none}
+
+.exp-panels{min-width:0}
+.exp-panel{
+  display:grid; grid-template-columns:minmax(0,17rem) minmax(0,1fr);
+  gap:clamp(1.1rem,2.5vw,1.75rem); align-items:start;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-xl);
+  padding:clamp(1.1rem,2.2vw,1.5rem); box-shadow:var(--shadow-1);
+}
+.exp-panel+.exp-panel{margin-top:1rem}
+/* JS mode: one at a time. */
+.explorer[data-js] .exp-panel{display:none; margin-top:0}
+.explorer[data-js] .exp-panel.is-on{display:grid}
+@media (prefers-reduced-motion:no-preference){
+  .explorer[data-js] .exp-panel.is-on{animation:expIn .26s ease both}
+  @keyframes expIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+}
+@media (max-width:52rem){ .exp-panel{grid-template-columns:1fr} }
+.exp-media{margin:0}
+.exp-media img{display:block; width:100%; height:auto; border-radius:var(--r-lg);
+  border:1px solid var(--line); aspect-ratio:3/2; object-fit:cover}
+.exp-body{min-width:0; display:flex; flex-direction:column; gap:.55rem}
+.exp-body h3{font:600 clamp(1.2rem,2.4vw,1.45rem)/1.28 var(--serif); margin:0;
+  letter-spacing:-.012em}
+.exp-body>p{margin:0; color:var(--ink-2); font-size:.95rem; line-height:1.6}
+.exp-empty{margin:.4rem 0 0; font-size:.9rem; color:var(--ink-3); line-height:1.6;
+  padding:.7rem .85rem; background:var(--bg-2); border-radius:var(--r);
+  border:1px dashed var(--line)}
+.exp-list{list-style:none; margin:.35rem 0 .5rem; padding:0; display:grid; gap:.05rem}
+.exp-list a{
+  display:grid; grid-template-columns:minmax(0,1fr) 5.5rem 5.5rem; align-items:center;
+  gap:.3rem .85rem; padding:.45rem .5rem; margin:0 -.5rem; border-radius:8px;
+  text-decoration:none; color:var(--ink-2); transition:background .13s ease, color .13s ease;
+}
+.exp-list a:hover{background:var(--a-wash); color:var(--a-ink)}
+.exp-t{font-size:.9rem; line-height:1.4; min-width:0}
+.exp-bar{display:block; height:.35rem; border-radius:99px; background:var(--bg-3);
+  overflow:hidden}
+.exp-bar>span{display:block; height:100%; border-radius:99px;
+  background:linear-gradient(90deg,var(--a-3),var(--a))}
+.exp-v{font-size:.8rem; color:var(--ink-3); text-align:right;
+  font-variant-numeric:tabular-nums; white-space:nowrap}
+.exp-v small{font-size:.7rem; opacity:.8}
+@media (max-width:38rem){
+  .exp-list a{grid-template-columns:minmax(0,1fr) 4.5rem}
+  .exp-bar{grid-column:1 / -1; grid-row:2}
+}
+.exp-body .btn{align-self:flex-start; margin-top:.35rem}
+
+/* ---------- filter chips ---------- */
+.chips{display:flex; flex-wrap:wrap; gap:.4rem; margin:0 0 1.25rem}
+.chip{
+  padding:.4rem .85rem; border-radius:99px; font:550 .845rem/1.3 var(--sans);
+  cursor:pointer; color:var(--ink-2); background:var(--card);
+  border:1px solid var(--line); transition:all .15s ease;
+}
+.chip:hover{border-color:var(--a-3); color:var(--a-ink)}
+.chip.is-on{background:var(--a); border-color:var(--a); color:#fff}
+/* Without JS the chips cannot filter anything, so they are not shown at all
+   rather than shown as controls that do nothing. */
+.chips:not([data-js]){display:none}
+
+/* hub cards (retained: used by article-side layouts) */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(16.5rem,1fr));
+  gap:1rem; list-style:none; padding:0; margin:0}
+.card{
+  position:relative; display:flex; flex-direction:column;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg);
+  text-decoration:none; color:inherit; box-shadow:var(--shadow-1); overflow:hidden;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:var(--shadow-3); border-color:var(--a-3)}
+.card-media{display:block; position:relative; aspect-ratio:3/2; overflow:hidden;
+  background:var(--bg-3)}
+.card-media img{display:block; width:100%; height:100%; object-fit:cover;
+  transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.card:hover .card-media img{transform:scale(1.045)}
+.card-media::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(to top, color-mix(in srgb,var(--card) 88%,transparent) 0%,
+    transparent 42%)}
+.card-ico{
+  position:absolute; left:1rem; bottom:-1.15rem; z-index:1;
+  width:2.6rem; height:2.6rem; border-radius:var(--r); display:grid; place-items:center;
+  background:var(--card); color:var(--a); border:1px solid var(--line);
+  box-shadow:var(--shadow-2);
+}
+.card-ico svg{width:1.3rem; height:1.3rem}
+.card-body{display:flex; flex-direction:column; gap:.5rem; flex:1 1 auto;
+  padding:1.9rem 1.4rem 1.3rem}
+.card h3{font:600 1.135rem/1.35 var(--serif); margin:0; letter-spacing:-.008em}
+.card p{margin:0; font-size:.93rem; color:var(--ink-2); line-height:1.6; flex:1 1 auto}
+.card-meta{display:flex; align-items:center; gap:.4rem; font-size:.82rem; color:var(--ink-3);
+  font-variant-numeric:tabular-nums; margin-top:.25rem}
+.card-meta strong{color:var(--a); font-weight:650}
+.card-go{display:inline-flex; align-items:center; gap:.35rem; font-size:.885rem;
+  font-weight:550; color:var(--a); margin-top:.15rem}
+.card-go svg{width:.9rem; height:.9rem; transition:transform .18s ease}
+.card:hover .card-go svg{transform:translateX(3px)}
+
+/* honesty / how-it-works band. Facts about our own process, never trust badges. */
+.band-grid{display:grid; grid-template-columns:minmax(0,24rem) minmax(0,1fr);
+  gap:clamp(2rem,4vw,3.25rem); align-items:start}
+.band-media{margin:0; position:sticky; top:6rem}
+.band-media img{display:block; width:100%; height:auto; border-radius:var(--r-xl);
+  box-shadow:var(--shadow-2); border:1px solid var(--line)}
+@media (max-width:60rem){
+  .band-grid{grid-template-columns:1fr}
+  .band-media{position:static; max-width:28rem}
+}
+.pillars{display:grid; grid-template-columns:repeat(auto-fit,minmax(14rem,1fr)); gap:1.75rem;
+  list-style:none; padding:0; margin:0}
+.pillar-ico{width:2.2rem; height:2.2rem; border-radius:8px; display:grid; place-items:center;
+  background:var(--card); border:1px solid var(--line); color:var(--a); margin:0 0 .8rem}
+.pillar-ico svg{width:1.15rem; height:1.15rem}
+.pillars h3{font:600 1.02rem/1.4 var(--sans); margin:0 0 .35rem}
+.pillars p{margin:0; font-size:.925rem; color:var(--ink-2); line-height:1.62}
+
+/* ---------- decision router ----------
+   Was a grid of six bordered cards, which read as more of the same after the
+   explorer directly above it. Now a numbered list of rows: the situation is the
+   line you scan, and the rule down the left ties them into one sequence. */
+.router{
+  list-style:none; padding:0; margin:0; counter-reset:rt;
+  border-top:1px solid var(--line);
+}
+.router li{counter-increment:rt; border-bottom:1px solid var(--line)}
+.router a{
+  display:grid; grid-template-columns:auto 2.4rem minmax(0,1fr) auto; align-items:center;
+  gap:.3rem 1.1rem; padding:1rem .75rem; text-decoration:none; color:inherit;
+  border-radius:var(--r); position:relative;
+  transition:background .15s ease, padding-left .18s ease;
+}
+.router a::before{
+  content:counter(rt,decimal-leading-zero);
+  font:600 .78rem/1 var(--mono); color:var(--a-3); font-variant-numeric:tabular-nums;
+}
+.router a:hover{background:var(--bg-2); padding-left:1.15rem}
+.router-ico{width:2.4rem; height:2.4rem; border-radius:10px; display:grid; place-items:center;
+  background:var(--a-wash); color:var(--a); flex:0 0 auto;
+  transition:background .15s ease, color .15s ease}
+.router a:hover .router-ico{background:var(--a); color:#fff}
+.router-ico svg{width:1.2rem; height:1.2rem}
+.router-txt{display:flex; flex-direction:column; gap:.15rem; min-width:0}
+.router-txt strong{font-weight:600; font-size:1.02rem; line-height:1.4; color:var(--ink)}
+.router-next{display:inline-flex; align-items:center; gap:.35rem; font-size:.85rem;
+  color:var(--ink-3); font-weight:500}
+.router a:hover .router-next{color:var(--a)}
+.router-next svg{width:.85rem; height:.85rem; transition:transform .18s ease}
+.router a:hover .router-next svg{transform:translateX(3px)}
+@media (max-width:44rem){
+  .router a{grid-template-columns:auto minmax(0,1fr); padding:.9rem .5rem}
+  .router-ico{display:none}
+}
+
+/* ---------- popular guides ---------- */
+.wide-head{max-width:44rem}
+.popular{list-style:none; counter-reset:pop; padding:0; margin:0;
+  border-top:1px solid var(--line)}
+.popular li{counter-increment:pop; border-bottom:1px solid var(--line)}
+.popular a{
+  display:grid; align-items:center; gap:.35rem 1.15rem; padding:.85rem .5rem;
+  grid-template-columns:1.9rem minmax(0,1fr) 9.5rem 7.5rem 6.5rem;
+  text-decoration:none; color:inherit; border-radius:var(--r);
+  transition:background .14s ease;
+}
+.popular a:hover{background:var(--bg-2)}
+.popular a::before{content:counter(pop,decimal-leading-zero);
+  font:600 .82rem/1 var(--mono); color:var(--a-3); font-variant-numeric:tabular-nums}
+.pop-t{font-size:1rem; line-height:1.45; font-weight:550; min-width:0}
+.popular a:hover .pop-t{color:var(--a)}
+.pop-hub{font-size:.75rem; color:var(--ink-3); text-transform:uppercase; letter-spacing:.06em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+/* Bar width is measured volume scaled against the top entry. Real data only. */
+.pop-bar{display:block; height:.4rem; border-radius:99px; background:var(--bg-3);
+  overflow:hidden}
+.pop-bar>span{display:block; height:100%; border-radius:99px;
+  background:linear-gradient(90deg,var(--a-3),var(--a))}
+.pop-v{font:600 .93rem/1 var(--sans); color:var(--ink-2); text-align:right;
+  font-variant-numeric:tabular-nums; white-space:nowrap}
+.pop-v small{font-weight:400; font-size:.78rem; color:var(--ink-3)}
+@media (max-width:60rem){
+  .popular a{grid-template-columns:1.9rem minmax(0,1fr) 6.5rem}
+  .pop-hub{grid-column:2; font-size:.72rem}
+  .pop-bar{grid-column:2 / -1; grid-row:3}
+  .pop-v{grid-column:3; grid-row:1}
+}
+.section-foot{margin:2.25rem 0 0; display:flex; gap:1.25rem; align-items:center;
+  flex-wrap:wrap}
+.foot-note{display:inline-flex; align-items:center; gap:.45rem; font-size:.845rem;
+  color:var(--ink-3); max-width:26rem; line-height:1.5}
+.foot-note svg{width:.95rem; height:.95rem; flex:0 0 auto; color:var(--a-3)}
+
+/* ---------- editorial pipeline ---------- */
+.steps{list-style:none; margin:0 0 3rem; padding:0; counter-reset:step;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(14rem,1fr)); gap:1.75rem}
+.steps li{position:relative; padding-top:.4rem}
+/* connector between steps, hidden on the last and whenever they wrap to one column */
+.steps li::after{
+  content:""; position:absolute; top:1.55rem; left:calc(2.6rem + .6rem); right:-1.75rem;
+  height:1px; background:linear-gradient(90deg,var(--line),transparent);
+}
+.steps li:last-child::after{display:none}
+@media (max-width:60rem){ .steps li::after{display:none} }
+.step-n{
+  position:absolute; top:0; left:1.75rem; z-index:1;
+  font:600 .68rem/1 var(--mono); color:var(--a);
+  background:var(--card); border:1px solid var(--line); border-radius:99px;
+  padding:.18rem .4rem;
+}
+.step-ico{width:2.6rem; height:2.6rem; border-radius:var(--r); display:grid;
+  place-items:center; background:var(--card); border:1px solid var(--line);
+  color:var(--a); margin:0 0 .85rem; box-shadow:var(--shadow-1)}
+.step-ico svg{width:1.25rem; height:1.25rem}
+.steps h3{font:600 1.04rem/1.4 var(--serif); margin:0 0 .35rem}
+.steps p{margin:0; font-size:.92rem; color:var(--ink-2); line-height:1.62}
+
+/* ---------- what we never do ---------- */
+.never-grid{display:grid; grid-template-columns:minmax(0,20rem) minmax(0,1fr);
+  gap:clamp(1.75rem,3.5vw,3rem); align-items:center;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-xl);
+  padding:clamp(1.25rem,2.5vw,1.75rem); box-shadow:var(--shadow-1)}
+@media (max-width:56rem){ .never-grid{grid-template-columns:1fr} }
+.never-media{margin:0}
+.never-media img{display:block; width:100%; height:auto; border-radius:var(--r-lg)}
+.never-body h3{display:flex; align-items:center; gap:.5rem; margin:0 0 .5rem;
+  font:600 1.16rem/1.4 var(--serif)}
+.never-body h3 svg{width:1.15rem; height:1.15rem; color:var(--g); flex:0 0 auto}
+.never-body>p{margin:0 0 1rem; font-size:.93rem; color:var(--ink-2); line-height:1.62}
+.never{list-style:none; margin:0 0 1.1rem; padding:0; display:grid; gap:.5rem}
+.never li{position:relative; padding-left:1.6rem; font-size:.93rem; line-height:1.55;
+  color:var(--ink)}
+.never li::before{
+  content:""; position:absolute; left:0; top:.45rem; width:.95rem; height:.95rem;
+  border-radius:50%; background:var(--g-wash);
+  box-shadow:inset 0 0 0 1.5px var(--g);
+}
+.never li::after{
+  content:""; position:absolute; left:.29rem; top:.72rem; width:.38rem; height:1.5px;
+  background:var(--g); border-radius:1px;
+}
+
+/* ---------- sources ----------
+   Five reference bodies, previously five more bordered cards. As a single
+   bordered table of rows they read as one list of authorities, which is what
+   they are, and the section stops competing with the ones above it. */
+.srcs{
+  display:grid; list-style:none; padding:0; margin:0;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-xl);
+  box-shadow:var(--shadow-1); overflow:hidden;
+}
+.srcs li+li{border-top:1px solid var(--line-2)}
+.srcs a{display:flex; gap:1rem; align-items:center; padding:1rem 1.15rem;
+  text-decoration:none; color:inherit; transition:background .15s ease}
+.srcs a:hover{background:var(--bg-2)}
+.src-mono{
+  flex:0 0 auto; width:2.6rem; height:2.6rem; border-radius:9px; display:grid;
+  place-items:center; background:var(--a-wash); color:var(--a);
+  font:650 .8rem/1 var(--sans); letter-spacing:.02em;
+}
+.src-body{display:flex; flex-direction:column; gap:.15rem; min-width:0}
+.src-n{display:inline-flex; align-items:center; gap:.4rem; font-weight:650; font-size:.99rem;
+  color:var(--a)}
+.src-n svg{width:.82rem; height:.82rem; opacity:.65; flex:0 0 auto}
+.srcs a:hover .src-n svg{opacity:1}
+.src-o{font-size:.755rem; color:var(--ink-3); text-transform:uppercase; letter-spacing:.06em}
+.src-w{font-size:.9rem; color:var(--ink-2); line-height:1.55; margin-top:.4rem}
+.srcs-note{display:flex; gap:.6rem; align-items:flex-start; margin:1.5rem 0 0;
+  font-size:.875rem; color:var(--ink-3); line-height:1.6; max-width:46rem}
+.srcs-note svg{width:1.05rem; height:1.05rem; flex:0 0 auto; color:var(--a-3);
+  margin-top:.15rem}
+
+/* ---------- closing band ----------
+   Three housekeeping links that used to be three more cards. As a tinted band
+   with the statement on the left and the links stacked on the right, the page
+   ends on the disclosure rather than on another grid. */
+.closing{padding-bottom:clamp(3rem,6vw,4.75rem)}
+.closing-in{
+  display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(1.5rem,4vw,3rem); align-items:center;
+  background:linear-gradient(140deg,var(--a-wash),var(--bg-2) 62%);
+  border:1px solid var(--line); border-radius:var(--r-xl);
+  padding:clamp(1.5rem,3.5vw,2.5rem);
+}
+@media (max-width:56rem){ .closing-in{grid-template-columns:1fr} }
+.closing-txt h2{font:600 clamp(1.4rem,3vw,1.9rem)/1.24 var(--serif); margin:0 0 .7rem;
+  letter-spacing:-.015em}
+.closing-txt p{margin:0; color:var(--ink-2); line-height:1.65; font-size:.97rem}
+.closing-links{display:grid; gap:.45rem}
+.closing-links a{
+  display:grid; grid-template-columns:auto minmax(0,1fr); gap:.15rem .85rem;
+  align-items:center; padding:.8rem .95rem; border-radius:var(--r-lg);
+  background:var(--card); border:1px solid var(--line); text-decoration:none;
+  color:inherit; transition:border-color .15s ease, transform .15s ease,
+    box-shadow .15s ease;
+}
+.closing-links a:hover{border-color:var(--a-3); transform:translateX(3px);
+  box-shadow:var(--shadow-2)}
+.closing-links span{grid-row:span 2; width:2.2rem; height:2.2rem; border-radius:9px;
+  display:grid; place-items:center; background:var(--a-wash); color:var(--a); line-height:0}
+.closing-links span svg{width:1.15rem; height:1.15rem}
+.closing-links b{font-weight:600; font-size:.95rem; line-height:1.35}
+.closing-links i{font-style:normal; font-size:.83rem; color:var(--ink-3); line-height:1.4}
+
+.wrap.narrow{max-width:50rem}
+
+/* subtle scroll reveal. Progressive: without support the content is simply visible,
+   so nothing on the page ever depends on the animation running. */
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{animation:rise linear both; animation-timeline:view();
+      animation-range:entry 0% entry 34%}
+    @keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+  }
+}
+
+/* state chips */
+.states{display:flex; flex-wrap:wrap; gap:.45rem; list-style:none; padding:0; margin:0}
+.states a{
+  display:block; padding:.42rem .8rem; border-radius:99px; font-size:.865rem;
+  text-decoration:none; color:var(--ink-2); background:var(--card);
+  border:1px solid var(--line); transition:all .15s ease;
+}
+.states a:hover{border-color:var(--a-3); color:var(--a-ink); background:var(--a-wash)}
+
+/* ===================================================== article header ==== */
+/* Same tinted ground and pane lattice as the landing hero, so a written article
+   looks like part of the site it was linked from rather than a bare document. */
+.page-hero{
+  position:relative; overflow:hidden; background:var(--bg-2);
+  border-bottom:1px solid var(--line);
+}
+.page-hero::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(46rem 22rem at 82% -30%,
+    color-mix(in srgb,var(--a-3) 20%,transparent), transparent 64%);
+}
+.page-hero::after{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.45;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:4.5rem 4.5rem;
+  -webkit-mask-image:radial-gradient(30rem 14rem at 88% 8%, #000, transparent 74%);
+  mask-image:radial-gradient(30rem 14rem at 88% 8%, #000, transparent 74%);
+}
+.ph-in{position:relative; z-index:1; padding:1.5rem 1.5rem clamp(1.75rem,3.5vw,2.5rem);
+  max-width:var(--wide)}
+.ph-in .crumbs{margin-inline:0; max-width:none; margin-bottom:1rem}
+.ph-eyebrow{
+  display:inline-flex; align-items:center; gap:.45rem; margin:0 0 .9rem;
+  padding:.3rem .75rem .3rem .55rem; border-radius:99px; text-decoration:none;
+  background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-1);
+  font-size:.755rem; font-weight:650; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-2); transition:border-color .15s ease, color .15s ease;
+}
+.ph-eyebrow:hover{border-color:var(--a-3); color:var(--a)}
+.ph-eyebrow svg{width:.9rem; height:.9rem; color:var(--a-2); flex:0 0 auto}
+.page-hero h1{
+  font:600 clamp(1.95rem,4.4vw,2.9rem)/1.14 var(--serif);
+  letter-spacing:-.022em; margin:0; color:var(--ink); max-width:22ch;
+}
+.ph-meta{display:flex; flex-wrap:wrap; gap:.5rem 1.4rem; margin:1.1rem 0 0}
+.ph-meta-i{display:inline-flex; align-items:center; gap:.4rem; font-size:.83rem;
+  color:var(--ink-3)}
+.ph-meta-i svg{width:.9rem; height:.9rem; flex:0 0 auto; color:var(--g)}
+.ph-meta-warn{color:var(--amber)}
+.ph-meta-warn svg{color:var(--amber)}
+
+/* ---------- key figures: the stats band, inside an article ---------- */
+.key-figs{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));
+  gap:1.25rem 1.75rem; list-style:none; margin:0 0 2.25rem; padding:1.4rem 1.5rem;
+  background:var(--bg-2); border:1px solid var(--line); border-radius:var(--r-xl);
+}
+.key-figs li{display:flex; flex-direction:column; gap:.15rem; position:relative;
+  padding-left:.9rem}
+.key-figs li::before{content:""; position:absolute; left:0; top:.3rem; bottom:.3rem;
+  width:2px; border-radius:2px; background:linear-gradient(180deg,var(--a-3),transparent)}
+.kf-n{font:600 clamp(1.4rem,3vw,1.85rem)/1.1 var(--serif); color:var(--ink);
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.kf-l{font-size:.875rem; font-weight:600; color:var(--ink); line-height:1.35}
+.kf-d{font-size:.8rem; color:var(--ink-3); line-height:1.45}
+
+/* ---------- callouts ---------- */
+.co{
+  margin:0 0 1.6rem; padding:1.05rem 1.2rem; border-radius:var(--r-lg);
+  border:1px solid var(--line); background:var(--bg-2); font-size:.955rem;
+}
+.co>p:last-child{margin-bottom:0}
+.co-h{
+  display:flex; align-items:center; gap:.5rem; margin:0 0 .5rem !important;
+  font:650 .78rem/1.3 var(--sans); letter-spacing:.09em; text-transform:uppercase;
+}
+.co-h svg{width:1rem; height:1rem; flex:0 0 auto}
+.co-note{background:var(--a-wash); border-color:color-mix(in srgb,var(--a-3) 34%,transparent)}
+.co-note .co-h{color:var(--a-ink)}
+.co-watch{background:var(--amber-wash); border-color:var(--amber-line)}
+.co-watch .co-h{color:var(--amber)}
+.co-limit{background:var(--g-wash); border-color:color-mix(in srgb,var(--g) 28%,transparent)}
+.co-limit .co-h{color:var(--g)}
+.co ul,.co ol{margin-bottom:0}
+
+/* ============================================================ article ==== */
+main{display:block}
+/* Horizontal padding is inherited from .wrap and must be restated: a
+   `padding:2.5rem 0 1rem` shorthand here silently zeroed it, which put
+   every article page hard against both screen edges on mobile. */
+.article-wrap{padding:2.5rem 1.5rem 1rem}
+.page{max-width:var(--read); margin:0 auto}
+.page h1{font:600 clamp(1.95rem,4.4vw,2.75rem)/1.16 var(--serif);
+  letter-spacing:-.02em; margin:.3rem 0 .8rem}
+.page h2{font:600 clamp(1.3rem,2.7vw,1.6rem)/1.3 var(--serif); letter-spacing:-.01em;
+  margin:2.6rem 0 .7rem; scroll-margin-top:5.5rem}
+.page h3{font:600 1.08rem/1.45 var(--sans); margin:1.9rem 0 .45rem}
+.page p{margin:0 0 1.15rem}
+.page a{color:var(--a); text-decoration-thickness:1px; text-underline-offset:2.5px}
+.page a:hover{color:var(--a-2)}
+.page ul,.page ol{margin:0 0 1.25rem; padding-left:1.35rem}
+.page li{margin:.35rem 0}
+.page li::marker{color:var(--a-3)}
+.page strong{font-weight:650}
+.page blockquote{margin:0 0 1.3rem; padding:.15rem 0 .15rem 1.15rem;
+  border-left:3px solid var(--a-3); color:var(--ink-2); font-style:italic}
+.page hr{border:0; border-top:1px solid var(--line); margin:2.4rem 0}
+
+.upd{font-size:.82rem; color:var(--ink-3); margin:0 0 1.6rem;
+  display:flex; align-items:center; gap:.4rem}
+.upd svg{width:.9rem; height:.9rem; flex:0 0 auto}
+
+/* answer-first block: 40-60 words, what AI Overviews extract (content gate 01) */
+.answer{
+  position:relative; background:var(--a-wash); border:1px solid color-mix(in srgb,var(--a-3) 35%,transparent);
+  border-radius:var(--r-lg); padding:1.25rem 1.4rem; margin:0 0 2rem;
+}
+.answer::before{
+  content:""; position:absolute; left:0; top:1.1rem; bottom:1.1rem; width:3px;
+  background:linear-gradient(180deg,var(--a-3),var(--a)); border-radius:0 3px 3px 0;
+}
+.answer p{margin:0; font-size:1.1rem; line-height:1.62; color:var(--ink)}
+
+.tw{overflow-x:auto; margin:0 0 1.6rem; border:1px solid var(--line);
+  border-radius:var(--r-lg); box-shadow:var(--shadow-1); background:var(--card)}
+table{border-collapse:collapse; width:100%; font-size:.935rem; min-width:26rem}
+th,td{text-align:left; padding:.72rem .95rem; border-bottom:1px solid var(--line-2)}
+th{background:var(--bg-2); font-weight:650; white-space:nowrap; font-size:.855rem;
+  letter-spacing:.02em; color:var(--ink-2)}
+td{font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--bg-2)}
+
+.faq{margin:2.8rem 0 0; padding-top:.5rem; border-top:1px solid var(--line)}
+.faq h2{margin-top:1.5rem}
+.faq details{border:1px solid var(--line); border-radius:var(--r); margin:0 0 .5rem;
+  background:var(--card); transition:border-color .15s ease}
+.faq details[open]{border-color:var(--a-3)}
+.faq summary{cursor:pointer; padding:.85rem 1rem; font-weight:600; list-style:none;
+  display:flex; align-items:flex-start; gap:.6rem; font-size:.99rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::before{content:"+"; color:var(--a); font-weight:700; flex:0 0 auto;
+  width:1rem; text-align:center}
+.faq details[open] summary::before{content:"\2212"}
+.faq details>*:not(summary){padding:0 1rem 0 2.6rem; margin-bottom:.9rem}
+
+.sources{margin:3rem 0 0; padding:1.4rem 1.5rem; border:1px solid var(--line);
+  border-radius:var(--r-lg); background:var(--bg-2); font-size:.9rem}
+.sources h2{font:600 .78rem/1 var(--sans); letter-spacing:.11em; text-transform:uppercase;
+  color:var(--ink-3); margin:0 0 .9rem}
+.sources ol{padding-left:1.2rem; margin:0; color:var(--ink-2)}
+.sources li{margin:.45rem 0}
+
+.related{max-width:var(--read); margin:3rem auto 0; padding:1.6rem 0 0;
+  border-top:1px solid var(--line)}
+.related h2{font:600 .78rem/1 var(--sans); letter-spacing:.11em; text-transform:uppercase;
+  color:var(--ink-3); margin:0 0 1rem}
+.related ul{list-style:none; margin:0; padding:0; display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); gap:.4rem 1.5rem}
+.related a{display:flex; gap:.5rem; padding:.5rem 0; text-decoration:none; color:var(--ink-2);
+  font-size:.93rem; border-bottom:1px solid var(--line-2)}
+.related a::before{content:"\2192"; color:var(--a-3); flex:0 0 auto}
+.related a:hover{color:var(--a)}
+/* Complete child index on a hub. This is what keeps 200+ guides out of the
+   orphan bucket, so it is dense on purpose. */
+.index-all ul.cols{grid-template-columns:repeat(auto-fit,minmax(17rem,1fr)); gap:0 2rem}
+.index-all a{font-size:.895rem; padding:.42rem 0}
+
+.crumbs{font-size:.83rem; color:var(--ink-3); margin:0 0 1.2rem; padding:0; list-style:none;
+  display:flex; gap:.45rem; flex-wrap:wrap; max-width:var(--read); margin-inline:auto}
+.crumbs a{color:var(--ink-3); text-decoration:none}
+.crumbs a:hover{color:var(--a)}
+.crumbs li::after{content:"\203A"; margin-left:.45rem; opacity:.5}
+.crumbs li:last-child{color:var(--ink-2)}
+.crumbs li:last-child::after{content:""}
+
+/* hub index list */
+.hub-list{list-style:none; padding:0; margin:1.5rem 0}
+.hub-list li{border-bottom:1px solid var(--line-2)}
+.hub-list a{display:flex; align-items:baseline; gap:.9rem; padding:.85rem 0;
+  text-decoration:none; color:var(--ink)}
+.hub-list a:hover{color:var(--a)}
+.hub-list .vol{margin-left:auto; color:var(--ink-3); font-size:.82rem;
+  font-variant-numeric:tabular-nums; white-space:nowrap}
+
+/* ====================================================== unwritten stub === */
+.stub{background:var(--amber-wash); border:1px solid var(--amber-line);
+  border-radius:var(--r-lg); padding:1.35rem 1.5rem; margin:0 0 1.8rem}
+.stub h2{margin:0 0 .6rem; font:650 .78rem/1 var(--sans); text-transform:uppercase;
+  letter-spacing:.11em; color:var(--amber); display:flex; align-items:center; gap:.45rem}
+.stub h2 svg{width:1rem; height:1rem}
+.stub p{margin:0 0 .9rem; font-size:.945rem; color:var(--ink-2)}
+.stub dl{margin:0; font-size:.9rem; display:grid; grid-template-columns:auto 1fr;
+  gap:.4rem 1rem; align-items:baseline}
+.stub dt{color:var(--ink-3)}
+.stub dd{margin:0}
+.stub code{font:.855rem var(--mono); background:var(--card); padding:.12rem .4rem;
+  border-radius:4px; border:1px solid var(--line)}
+.stub ul{margin:.5rem 0 0; font-size:.9rem; padding-left:1.2rem}
+
+/* ============================================================= footer ==== */
+/* The footer is a fixed dark band, independent of the page's own light/dark
+   toggle - values below are hardcoded rather than drawn from the --ink/--bg
+   custom properties, which still describe the PAGE's current theme. A footer
+   that flipped to light mode along with the page would lose the one part of
+   this site that stays constant regardless of what a reader has chosen. */
+.foot{
+  --f-ink:#e8eef4; --f-ink-2:#a9bacb; --f-ink-3:#7b8ea3; --f-line:#28333e;
+  --f-bg-3:#18222c; --f-a:#30b4e4; --f-a-wash:#132b38;
+  position:relative; margin-top:6.5rem; padding:4.5rem 0 1.75rem;
+  background:#0c1116; color:var(--f-ink-3); font-size:.895rem;
+}
+/* Wave divider: an SVG drawn inline as a background image rather than fetched,
+   so the transition from page to footer is a curve, not a hard edge. Pulled up
+   over the last section by a negative margin baked into its own height. */
+.foot::before{
+  content:""; position:absolute; left:0; right:0; bottom:100%; height:5.5rem;
+  pointer-events:none; background-repeat:no-repeat; background-size:100% 100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'%3E%3Cpath d='M0,64 C240,110 480,0 720,28 C960,56 1200,118 1440,60 L1440,110 L0,110 Z' fill='%230c1116'/%3E%3C/svg%3E");
+}
+.foot-grid{
+  display:grid; gap:clamp(1.75rem,4vw,3rem);
+  grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr));
+  padding-bottom:2.25rem; margin-bottom:1.5rem; border-bottom:1px solid var(--f-line);
+}
+@media (max-width:62rem){ .foot-grid{grid-template-columns:1fr 1fr} }
+@media (max-width:34rem){ .foot-grid{grid-template-columns:1fr} }
+.foot-brand{max-width:26rem}
+
+.foot-col h2{
+  font:650 .74rem/1 var(--sans); letter-spacing:.11em; text-transform:uppercase;
+  color:var(--f-ink); margin:0 0 1rem;
+}
+.foot-col ul{list-style:none; margin:0; padding:0; display:grid; gap:.1rem}
+.foot-col a{
+  display:flex; align-items:center; gap:.6rem; padding:.32rem 0;
+  color:var(--f-ink-2); text-decoration:none; line-height:1.45; font-size:.885rem;
+  transition:color .14s ease, padding-left .14s ease;
+}
+.foot-col a:hover{color:var(--f-a); padding-left:.25rem}
+/* count badge on the section links: derived from routes.json, never decorative */
+.foot-col a span{
+  margin-left:auto; flex:0 0 auto; font-size:.7rem; font-variant-numeric:tabular-nums;
+  color:var(--f-ink-3); background:var(--f-bg-3); border-radius:99px; padding:.1rem .45rem;
+}
+.foot-col a:hover span{background:var(--f-a-wash); color:var(--f-a)}
+
+.foot-marks{list-style:none; margin:1.1rem 0 0; padding:0; display:grid; gap:.4rem}
+.foot-marks li{display:flex; align-items:center; gap:.45rem; font-size:.815rem;
+  color:var(--f-ink-3); line-height:1.45}
+.foot-marks svg{width:.9rem; height:.9rem; flex:0 0 auto; color:var(--f-a)}
+
+.foot-bar{display:flex; gap:1rem 2rem; flex-wrap:wrap; align-items:baseline}
+.foot-copy{margin:0; font-size:.83rem; color:var(--f-ink-2); font-weight:550;
+  flex:0 0 auto}
+/* Footer carries the FULL stacked lockup, which has the room to be legible here.
+   Two files: the navy original, and a knockout whose wordmark is lifted to the
+   dark theme's ink. Swapped by CSS rather than <picture> so the manual theme
+   toggle drives it too, which a media query alone could not do. */
+/* The footer band is now dark in BOTH page themes, so the knockout lockup is
+   the correct one unconditionally - there is no longer a light ground for the
+   navy original to sit on. The theme-conditional swap that used to live here
+   would have shown navy-on-near-black whenever the page was in light mode. */
+.foot-logo{display:inline-block; margin:0 0 1rem; line-height:0}
+.foot-logo .lockup{display:none; width:110px; height:107px}
+.foot-logo .lockup-dark{display:block}
+.foot-disclosure{margin:0; line-height:1.6; font-size:.865rem}
+/* No opacity here. Against the footer's fixed near-black, --f-ink-3 measures
+   5.64:1, but knocking it back to 85% blends it toward the background and lands
+   at ~4.34:1 - under the 4.5:1 floor for body text. */
+.foot-legal{margin:0; font-size:.8rem; max-width:54rem; line-height:1.6;
+  flex:1 1 22rem}
+
+/* ====================================================== nav breakpoint === */
+/* 64rem (1024px): at or below this the burger and the bottom call bar take
+   over; above it the full nav shows. This number only works because the nav
+   was cut to five short labels - brand + nav measures ~921px, which clears
+   the ~976px available inside the masthead at 1024px. Adding a sixth item
+   or a longer label will wrap the nav again; check the arithmetic before
+   doing either. */
+/* Below this the six sections cannot sit on one line without wrapping into a
+   second row that reads as a second header, so the nav collapses into a panel
+   the burger opens. The panels become inline accordions inside it rather than
+   floating layers, which have nowhere to float to on a phone. */
+@media (max-width:64rem){
+  /* The call bar is fixed to the bottom, so it takes the page out from under
+     nothing at the top - but the last of the footer would sit beneath it, so
+     the body reserves that height. The floating dock lifts clear of it too. */
+  /* Clearance for the fixed bottom bar goes on the FOOTER, not on body: body
+     padding would leave a strip of page background showing below the footer,
+     which on a dark footer reads as a bug. Extending the footer's own padding
+     keeps its background running behind the bar. */
+  .foot{padding-bottom:calc(1.75rem + 4.6rem)}
+  .dock{bottom:calc(4.6rem + env(safe-area-inset-bottom, 0px))}
+  /* In the burger panel the quote button goes full width at the end. */
+  .nav-cta-item{margin:.75rem 0 0}
+  .nav-cta{display:flex; justify-content:center; width:100%; padding:.8rem 1rem;
+    font-size:.95rem}
+  .burger{display:grid}
+  .masthead-in{gap:.75rem; flex-wrap:wrap}
+  .nav{
+    order:3; width:100%; margin-left:0; display:none;
+    border-top:1px solid var(--line); padding:.5rem 0 .9rem; max-height:70vh;
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
+  }
+  .nav-open .nav{display:block}
+  .nav-list{flex-direction:column; gap:0}
+  .nav-item{padding:0; display:block; border-bottom:1px solid var(--line-2)}
+  .nav-item:last-child{border-bottom:0}
+  .nav-link{display:block; padding:.8rem .2rem; font-size:1rem; color:var(--ink)}
+  .nav-link::after{display:none}
+  .nav-chev{
+    position:absolute; right:.2rem; top:.55rem; width:2.1rem; height:2.1rem; margin:0;
+    border:1px solid var(--line); border-radius:8px; background:var(--card);
+  }
+  .nav-item{position:relative}
+  .nav-chev svg{width:1rem; height:1rem}
+  /* No hover-open on touch: only the chevron opens a panel here. */
+  .nav-panel{
+    position:static; width:auto; max-width:none; padding-top:0;
+    display:none; opacity:1; visibility:visible; transform:none;
+  }
+  .nav-item.open .nav-panel{display:block}
+  .nav-item:hover .nav-panel,.nav-item:focus-within .nav-panel{display:none}
+  .nav-item.open:hover .nav-panel,.nav-item.open:focus-within .nav-panel{display:block}
+  .nav-panel-in{border:0; box-shadow:none; background:transparent;
+    padding:0 0 .8rem .2rem}
+  .nav-item:hover .nav-chev,.nav-item:focus-within .nav-chev{transform:none}
+  .nav-item.open .nav-chev{transform:rotate(180deg)}
+}
+
+@media (max-width:44rem){
+  .hero::after{background-size:3.5rem 3.5rem}
+  .btn{flex:1 1 auto; justify-content:center}
+  .dock-btn{width:2.5rem; height:2.5rem}
+
+  /* The highlighted phrase is nowrap so its underline can be one clean sweep.
+     On a 375px screen the phrase is wider than the viewport, and body's
+     overflow-x:hidden was quietly clipping the end of the headline rather than
+     showing a scrollbar. Below this width it wraps, and the sweep becomes an
+     inline background that repeats per line box instead. */
+  .hero h1 em{
+    white-space:normal;
+    background:linear-gradient(90deg,
+      color-mix(in srgb,var(--a-3) 38%,transparent), transparent 92%);
+    -webkit-box-decoration-break:clone; box-decoration-break:clone;
+    border-radius:3px; padding:0 .08em; margin:0 -.08em;
+  }
+  .hero h1 em::after{display:none}
+}
+
+
+/* ================================================ nav CTA + call bar ===== */
+/* The one commercial control in the header. Visually separated from the
+   section links so it does not read as a seventh section. */
+.nav-cta-item{margin-left:.5rem}
+.nav-cta{
+  display:inline-flex; align-items:center; gap:.4rem; white-space:nowrap;
+  padding:.5rem .95rem; border-radius:99px; text-decoration:none;
+  font-weight:600; font-size:.86rem; color:#fff;
+  background:linear-gradient(140deg,var(--a-2),var(--a));
+  box-shadow:var(--shadow-1);
+  transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.nav-cta:hover{transform:translateY(-1px); box-shadow:var(--shadow-2); filter:saturate(1.15)}
+.nav-cta svg{width:.9rem; height:.9rem}
+
+/* Sticky mobile action bar. Hidden entirely on desktop, where the nav already
+   carries the quote button and a tel: link is far less useful. */
+/* Pinned to the BOTTOM of the viewport: it stays reachable at any scroll
+   position without eating the top of the page, and it sits where a thumb
+   already is on a phone. `fixed`, not `sticky`, so it does not scroll away.
+   env(safe-area-inset-bottom) keeps it clear of the iOS home indicator. */
+.callbar{
+  display:flex; gap:.5rem; position:fixed; left:0; right:0; bottom:0; z-index:55;
+  padding:.55rem .75rem calc(.55rem + env(safe-area-inset-bottom, 0px));
+  background:color-mix(in srgb, var(--bg) 94%, transparent);
+  -webkit-backdrop-filter:saturate(180%) blur(12px);
+  backdrop-filter:saturate(180%) blur(12px);
+  border-top:1px solid var(--line);
+  box-shadow:0 -6px 20px -12px rgba(11,22,28,.5);
+}
+/* Hidden above the nav breakpoint, where the nav already carries the quote
+   button and a tel: link is far less useful. Expressed as min-width so it does
+   not depend on where in the file this block happens to sit. */
+@media (min-width:64.01rem){ .callbar{display:none} }
+.callbar-btn{
+  flex:1 1 0; display:inline-flex; align-items:center; justify-content:center;
+  gap:.45rem; padding:.72rem .5rem; text-decoration:none; font-weight:600;
+  font-size:.92rem; border-radius:10px; min-height:2.9rem;
+}
+.callbar-btn svg{width:1.05rem; height:1.05rem; flex:0 0 auto}
+.callbar-call{background:var(--deep); color:var(--deep-ink)}
+.callbar-quote{background:linear-gradient(140deg,var(--a-2),var(--a)); color:#fff}
+
+/* ======================================================== quote form ==== */
+.quote-form{max-width:var(--read); margin:2.5rem auto 0}
+.qf-grid{display:grid; grid-template-columns:1fr 1fr; gap:1.1rem 1.25rem}
+@media (max-width:40rem){ .qf-grid{grid-template-columns:1fr} }
+/* Fields that need the full width to be usable. */
+.qf-row[data-field="detail"],.qf-row[data-field="scope"],
+.qf-row[data-field="timing"]{grid-column:1 / -1}
+.qf-row{display:flex; flex-direction:column; gap:.35rem; min-width:0}
+.qf-row label{font-weight:600; font-size:.92rem; color:var(--ink)}
+.qf-row label abbr{color:var(--a); text-decoration:none; border:0}
+.qf-row input,.qf-row select,.qf-row textarea{
+  font:inherit; font-size:.95rem; color:var(--ink); background:var(--card);
+  border:1.5px solid var(--line); border-radius:var(--r); padding:.62rem .75rem;
+  width:100%; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.qf-row textarea{resize:vertical; min-height:5.5rem}
+.qf-row input:focus,.qf-row select:focus,.qf-row textarea:focus{
+  outline:none; border-color:var(--a);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--a) 22%,transparent);
+}
+.qf-help{margin:0; font-size:.8rem; color:var(--ink-3); line-height:1.45}
+.qf-err{margin:0; font-size:.82rem; font-weight:550; color:#b3261e}
+:root[data-theme="dark"] .qf-err{color:#f2b8b5}
+.qf-row.is-bad input,.qf-row.is-bad select,.qf-row.is-bad textarea{border-color:#b3261e}
+:root[data-theme="dark"] .qf-row.is-bad input,
+:root[data-theme="dark"] .qf-row.is-bad select,
+:root[data-theme="dark"] .qf-row.is-bad textarea{border-color:#f2b8b5}
+.qf-foot{display:flex; flex-wrap:wrap; align-items:center; gap:.9rem 1.25rem;
+  margin-top:1.6rem}
+.qf-submit{flex:0 0 auto}
+.qf-privacy{margin:0; font-size:.82rem; color:var(--ink-3); line-height:1.5;
+  flex:1 1 16rem}
+.qf-done{
+  margin-top:1.6rem; padding:1.2rem 1.35rem; border-radius:var(--r-lg);
+  background:var(--amber-wash); border:1px solid var(--amber-line);
+}
+.qf-done h2{margin:0 0 .5rem; font:650 .8rem/1.3 var(--sans);
+  letter-spacing:.09em; text-transform:uppercase; color:var(--amber)}
+.qf-done p{margin:0 0 .6rem; font-size:.93rem; color:var(--ink-2); line-height:1.6}
+.qf-done p:last-child{margin-bottom:0}
+.qf-alt{margin:1.4rem 0 0; font-size:.9rem; color:var(--ink-3)}
+.qf-alt a{color:var(--a); font-weight:600}
+
+
+
+/* ===================================================== load transitions === */
+/* Page load: the whole main column eases in once, and the hero's own pieces
+   stagger just behind it. Kept short and small - a long or large movement on
+   every navigation is tiring, not polished.
+
+   Everything here is opt-OUT safe: prefers-reduced-motion turns it off entirely
+   (the global rule near the top of this file already kills animation), and with
+   JS off nothing depends on it either, because these are CSS animations on
+   elements that are visible by default. */
+@media (prefers-reduced-motion:no-preference){
+  /* NOT the masthead. pageIn animates `transform`, and a transform on a
+     position:sticky element shifts it away from the offset it is supposed to
+     pin at - the header ended up sitting 6px low with page content showing in
+     the gap above it. The header fades only; nothing moves it. */
+  main,.foot{animation:pageIn .42s cubic-bezier(.2,.7,.3,1) both}
+  .masthead{animation:fadeIn .3s ease both}
+  .foot{animation-delay:.06s}
+
+  .hero-panel>*,.hero-inner>*{animation:riseIn .5s cubic-bezier(.2,.7,.3,1) both}
+  .hero-panel>*:nth-child(1),.hero-inner>*:nth-child(1){animation-delay:.06s}
+  .hero-panel>*:nth-child(2),.hero-inner>*:nth-child(2){animation-delay:.12s}
+  .hero-panel>*:nth-child(3),.hero-inner>*:nth-child(3){animation-delay:.18s}
+  .hero-panel>*:nth-child(4),.hero-inner>*:nth-child(4){animation-delay:.24s}
+  .hero-panel>*:nth-child(5),.hero-inner>*:nth-child(5){animation-delay:.30s}
+
+  /* Content load: swapping a section explorer panel or filtering the popular
+     list should read as a change, not a repaint. */
+  .explorer[data-js] .exp-panel.is-on{animation:panelIn .3s cubic-bezier(.2,.7,.3,1) both}
+  .popular li{animation:fadeIn .26s ease both}
+}
+@keyframes pageIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+@keyframes riseIn{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+@keyframes panelIn{from{opacity:0; transform:translateY(8px) scale(.995)} to{opacity:1; transform:none}}
+@keyframes fadeIn{from{opacity:0} to{opacity:1}}
