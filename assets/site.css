@@ -1120,6 +1120,14 @@ tbody tr:hover{background:var(--bg-2)}
   .nav-item.open .nav-chev{transform:rotate(180deg)}
 }
 
+/* Below 600px the full wordmark wraps onto two lines next to the burger,
+   nearly doubling the header's height. Sized down just enough to stay on
+   one line at this width; the tagline is already hidden above at 64rem. */
+@media (max-width:37.5rem){
+  .brand-name b{font-size:1.02rem}
+  .brand-mark{width:1.9rem; height:1.9rem}
+}
+
 @media (max-width:44rem){
   .hero::after{background-size:3.5rem 3.5rem}
   .btn{flex:1 1 auto; justify-content:center}
