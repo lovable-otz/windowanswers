@@ -17,10 +17,6 @@
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/brand/logo-mark-180.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://windowanswers.com/#org", "name": "Window Answers", "url": "https://windowanswers.com/", "description": "An independent US guide to window replacement: what it costs, what the options are, and how to pick a company. We are not a contractor."}, {"@type": "WebSite", "@id": "https://windowanswers.com/#website", "url": "https://windowanswers.com/", "name": "Window Answers", "publisher": {"@id": "https://windowanswers.com/#org"}, "inLanguage": "en-US"}]}</script>
-<script>/* Apply a saved theme choice before first paint, so the page never flashes
-   the wrong one. With no saved choice the OS preference decides, which is why a
-   machine set to dark mode sees the dark theme. No page content depends on this. */
-(function(){try{var t=localStorage.getItem("theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}})();</script>
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to content</a>
@@ -105,14 +101,9 @@
      it is the last thing on the page, and it reads last. -->
 <div class="callbar"><a class="callbar-btn callbar-call" href="tel:+15550100199"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.4 3.6h3.1l1.6 4-2 1.2a11.4 11.4 0 005.1 5.1l1.2-2 4 1.6v3.1a1.6 1.6 0 01-1.8 1.6C10.9 17.6 6.4 13.1 4.8 5.4A1.6 1.6 0 016.4 3.6z"/></svg><span>Call now</span></a><a class="callbar-btn callbar-quote" href="/get-quote/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 12h14"/><path d="M13 6.5l5.5 5.5-5.5 5.5"/></svg><span>Get a quote</span></a></div>
 
-<!-- Floating tools. Fixed to the bottom-right so the theme control is reachable
-     from anywhere on a 260-answer index page, not only from the top of it. -->
+<!-- Floating back-to-top. The theme toggle that used to sit above it is
+     removed: this site is one fixed theme, not a light/dark switch. -->
 <div class="dock">
-  <button class="dock-btn" type="button" data-theme-toggle
-          aria-label="Switch between light and dark theme">
-    <span class="dock-ico theme-ico-sun"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.1"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg></span>
-    <span class="dock-ico theme-ico-moon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 14.2A8.3 8.3 0 019.8 4 8.6 8.6 0 1020 14.2z"/></svg></span>
-  </button>
   <a class="dock-btn dock-top" href="#top" data-to-top aria-label="Back to top" hidden>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 19.2V5.4"/><path d="M6.2 11.2L12 5.4l5.8 5.8"/></svg>
   </a>
@@ -124,16 +115,6 @@
    anchor it replaces is the page top anyway. Nothing readable depends on this. */
 (function(){
   var root=document.documentElement, body=document.body;
-
-  /* ---- theme ---- */
-  var t=document.querySelector("[data-theme-toggle]");
-  if(t)t.addEventListener("click",function(){
-    var c=root.getAttribute("data-theme")||
-          (matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),
-        n=c==="dark"?"light":"dark";
-    root.setAttribute("data-theme",n);
-    try{localStorage.setItem("theme",n)}catch(e){}
-  });
 
   /* ---- back to top: only offered once there is somewhere to go back to.
      JS is running, so drop the no-JS `hidden` and let the class drive it - that
