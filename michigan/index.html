@@ -13,7 +13,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://windowanswers.com/michigan/">
 <meta property="og:site_name" content="Window Answers">
-<link rel="stylesheet" href="/assets/site.css?v=50595304">
+<link rel="stylesheet" href="/assets/site.css?v=65e5aa73">
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/brand/logo-mark-180.png">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://windowanswers.com/#org", "name": "Window Answers", "url": "https://windowanswers.com/", "description": "An independent US guide to window replacement: what it costs, what the options are, and how to pick a company. We are not a contractor."}, {"@type": "WebSite", "@id": "https://windowanswers.com/#website", "url": "https://windowanswers.com/", "name": "Window Answers", "publisher": {"@id": "https://windowanswers.com/#org"}, "inLanguage": "en-US"}]}</script>
@@ -132,12 +132,37 @@
     sync();
   }
 
-  /* ---- mobile menu ---- */
+  /* ---- mobile menu ----
+     The open panel is fixed-position (see .nav-open .nav in the CSS) so it no
+     longer grows the sticky masthead's own box. `top` is set here, from the
+     masthead's actual rendered height, so the panel starts exactly where the
+     header ends on whichever page is loaded - it varies by a few px between
+     pages that do and do not carry the brand ribbon above the header.
+
+     The nav is also MOVED to be a direct child of <body> while open, then
+     moved back into the masthead on close. Reason: .masthead uses
+     backdrop-filter for its frosted-glass sticky effect, and per spec an
+     element with backdrop-filter (like one with `filter` or `transform`)
+     becomes the containing block for any position:fixed DESCENDANT. With the
+     nav still nested inside .masthead, `bottom:0` was resolving against the
+     ~70px-tall masthead box instead of the viewport, so the panel collapsed
+     to a sliver instead of filling the screen below the header. Moving it out
+     from under that ancestor for the open state sidesteps the whole problem;
+     appending it back to its original parent on close restores the ordinary
+     desktop nav bar with no visible seam. */
   var burger=document.querySelector("[data-nav-toggle]"),
-      nav=document.getElementById("mainnav");
+      nav=document.getElementById("mainnav"),
+      masthead=document.querySelector(".masthead"),
+      navHome=nav?nav.parentElement:null;
   if(burger&&nav){
     burger.addEventListener("click",function(){
       var open=body.classList.toggle("nav-open");
+      if(open){
+        if(masthead)nav.style.top=masthead.getBoundingClientRect().height+"px";
+        document.body.appendChild(nav);
+      }else if(navHome){
+        navHome.appendChild(nav);
+      }
       burger.setAttribute("aria-expanded",open?"true":"false");
       burger.setAttribute("aria-label",open?"Close main menu":"Open main menu");
     });

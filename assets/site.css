@@ -1094,7 +1094,28 @@ tbody tr:hover{background:var(--bg-2)}
     border-top:1px solid var(--line); padding:.5rem 0 .9rem; max-height:70vh;
     overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
-  .nav-open .nav{display:block}
+  /* Opening the mobile nav used to add it as ordinary flow content inside the
+     STICKY masthead (order:3 in the same flex box as the brand and burger).
+     With up to 70vh of nav list, the sticky header itself ballooned to nearly
+     full-screen height while pinned at the top - which look and behaves
+     exactly like the page had jumped back to the very top, because the
+     expanded header now covers the same area the real top-of-page header
+     would. It never actually moved scroll position; the header just grew
+     over the content.
+
+     Fixed by taking the open nav OUT of the masthead's box entirely: it
+     becomes its own fixed-position panel, starting just below the (now
+     fixed-height) masthead, with its own scroll. `top` is set in JS to the
+     masthead's actual rendered height, so it works whether or not a given
+     page has the 3px brand ribbon above the masthead. */
+  .nav-open .nav{
+    display:block; position:fixed; left:0; right:0; bottom:0; z-index:49;
+    max-height:none; margin:0; background:var(--bg);
+    box-shadow:0 18px 40px -16px rgba(11,22,28,.35);
+  }
+  /* Background can no longer scroll behind the open panel - nothing to
+     confuse "the header grew" with "the page moved". */
+  body.nav-open{overflow:hidden}
   .nav-list{flex-direction:column; gap:0}
   .nav-item{padding:0; display:block; border-bottom:1px solid var(--line-2)}
   .nav-item:last-child{border-bottom:0}
