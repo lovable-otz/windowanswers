@@ -1085,6 +1085,10 @@ tbody tr:hover{background:var(--bg-2)}
     font-size:.95rem}
   .burger{display:grid}
   .masthead-in{gap:.75rem; flex-wrap:wrap}
+  /* The tagline ("YOUR ... RESOURCE") wraps onto its own line at this width
+     and reads as clutter next to the burger. The wordmark alone carries the
+     brand at this size; the tagline still shows on desktop. */
+  .brand-name i{display:none}
   .nav{
     order:3; width:100%; margin-left:0; display:none;
     border-top:1px solid var(--line); padding:.5rem 0 .9rem; max-height:70vh;
